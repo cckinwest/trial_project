@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>StockWizard - Stock Market News</title>
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <header>
+    <div class="header-section">
+      <img src="logo.png" width="150px" height="150px">
+    </div>
+    <div class="header-section">
+      <label for="stock-input">Stock Name:</label>
+      <input type="text" id="stock-input" placeholder="Enter stock name..." onkeyup="
+      var start = this.selectionStart;
+      var end = this.selectionEnd;
+      this.value = this.value.toUpperCase();
+      this.setSelectionRange(start, end);">
+    </div>
+    <div class="header-section">
+      <label for="start-date-input">Start Date:</label>
+      <input type="date" id="start-date-input">
+    </div>
+    <div class="header-section">
+      <label for="end-date-input">End Date:</label>
+      <input type="date" id="end-date-input">
+    </div>
+
+    <div class="header-section">
+      <button id="search-button">Search</button>
+    </div>
+
+
+
+  </header>
+  <section class="row">
+
+
+    <div class="left">
+      <section id="history-container">
+        <div class="history-article">
+          <h2 class="ticker-header">History</h2>
+
+          <div>
+            <div id="historyPanel">
+
+            </div>
+            <button id="clear-button">Clear</button>
+          </div>          
+        </div>
+      </section>
+    </div>
+
+
+    <div class="center">
+      <div class="chartContainer">
+        <section id="chart-container">
+
+          <div id="myChart">
+
+          </div>
+
+        </section>
+
+      </div>
+    </div>
+
+
+    <div class="right">
+
+      <section id="news-container">
+        <div class="news-article">
+          <h2>News</h2>
+
+          <div>
+            <div id="newsPanel"></div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+  </section>
+  <footer>
+    <p>&copy; 2023 StockWizard</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"
+    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
+    integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+  <script src="assets/js/script.js"></script>
+
+  </body>
+
+</html>
