@@ -88,13 +88,26 @@ async function DisplayStockData(stocksTicker, from, to) {
   }
 }
 
+async function getStockInfo(stocksTicker) {
+  const APIKEY = "79G4QU6AaADL93J2chBjRQKru3lIvD8z";
+  const TicketDetails = "https://api.polygon.io/v3/reference/tickers";
+
+  var url = `${TicketDetails}/${stocksTicker}?apiKey=${APIKEY}`;
+
+  var response = await fetch(url);
+  var data = await response.json();
+
+  return {
+    name: data.results.name,
+    iconURL: data.results.branding.logo_url + `?apiKey=${APIKEY}`,
+  };
+}
+
 async function getNews(stocksTicker, from, to) {
   const endPoint = "https://api.currentsapi.services/v1/search";
   const APIKEY = "Bl7H_isDAqa7Ic0-xjm-jWD1Il0MzhU0p_uBnYWWnmoOcvUO";
 
-  var url = `${endPoint}?apiKey=${APIKEY}&language=en&start_date=${from}&end_date=${to}&keywords=${
-    "(NYSE:" + stocksTicker + ")"
-  }`;
+  var url = `${endPoint}?apiKey=${APIKEY}&language=en&start_date=${from}&end_date=${to}&keywords=${stocksTicker}&categories=finance`;
 
   var response = await fetch(url);
   var data = await response.json();
@@ -174,21 +187,6 @@ async function DisplayNews(stocksTicker, from, to) {
     newsPanel.appendChild(errorMsg);
     newsSuccess = false;
   }
-}
-
-async function getStockInfo(stocksTicker) {
-  const APIKEY = "79G4QU6AaADL93J2chBjRQKru3lIvD8z";
-  const TicketDetails = "https://api.polygon.io/v3/reference/tickers";
-
-  var url = `${TicketDetails}/${stocksTicker}?apiKey=${APIKEY}`;
-
-  var response = await fetch(url);
-  var data = await response.json();
-
-  return {
-    name: data.results.name,
-    iconURL: data.results.branding.logo_url + `?apiKey=${APIKEY}`,
-  };
 }
 
 function updateTickerHistory(tickerHistory) {
