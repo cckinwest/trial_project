@@ -107,7 +107,7 @@ async function getNews(stocksTicker, from, to) {
   const endPoint = "https://api.currentsapi.services/v1/search";
   const APIKEY = "Bl7H_isDAqa7Ic0-xjm-jWD1Il0MzhU0p_uBnYWWnmoOcvUO";
 
-  var url = `${endPoint}?apiKey=${APIKEY}&language=en&start_date=${from}&end_date=${to}&keywords=${stocksTicker}&categories=finance`;
+  var url = `${endPoint}?apiKey=${APIKEY}&language=en&start_date=${from}&end_date=${to}&keywords=${stocksTicker}`;
 
   var response = await fetch(url);
   var data = await response.json();
