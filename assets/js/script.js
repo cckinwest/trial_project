@@ -51,9 +51,20 @@ async function getStockData(stocksTicker, from, to) {
   var url = `${Aggregates}/${stocksTicker}/range/1/day/${from}/${to}?adjusted=true&sort=asc&limit=120&apiKey=${APIKEY}`;
 
   var response = await fetch(url);
-  var data = await response.json();
 
-  return data.results;
+  if (response.status == 200) {
+    var data = await response.json();
+
+    return {
+      code: response.status,
+      arr: data.results,
+    };
+  } else {
+    return {
+      code: response.status,
+      arr: [],
+    };
+  }
 }
 
 async function createCompareCharts(stock, compare, from, to) {
@@ -61,9 +72,17 @@ async function createCompareCharts(stock, compare, from, to) {
     chartContainer.removeChild(chartContainer.firstChild);
   }
 
-  try {
-    const stockData = await getStockData(stock, from, to);
-    const compareData = await getStockData(compare, from, to);
+  const stockObj = await getStockData(stock, from, to);
+  const compareObj = await getStockData(compare, from, to);
+
+  if (
+    stockObj.code == 200 &&
+    stockObj.arr &&
+    compareObj.code == 200 &&
+    compareObj.arr
+  ) {
+    const stockData = stockObj.arr;
+    const compareData = compareObj.arr;
 
     const dates = stockData.map((data) => dayjs(data.t).format("M/D"));
 
@@ -78,7 +97,7 @@ async function createCompareCharts(stock, compare, from, to) {
     CreateChart(dates, stockClose, stock, compareClose, compare);
 
     createComparePanel(stock, from, to);
-  } catch (error) {
+  } else {
     var errorMsg = document.createElement("h1");
     errorMsg.textContent = "Error fetching stock : chart cannot be created";
     chartContainer.appendChild(errorMsg);
@@ -119,31 +138,27 @@ async function DisplayStockData(stocksTicker, from, to) {
     chartContainer.removeChild(chartContainer.firstChild);
   }
 
-  try {
-    const data = await getStockData(stocksTicker, from, to);
-    if (data.length > 1) {
-      const dates = data.map((entry) => dayjs(entry.t).format("M/D"));
-      const open = data.map((entry) => entry.o);
-      const close = data.map((entry) => entry.c);
+  const dataObj = await getStockData(stocksTicker, from, to);
 
-      var chartTitle = document.createElement("h2");
-      chartTitle.textContent = `${stocksTicker} (${from} to ${to})`;
+  if (dataObj.code == 200 && dataObj.arr && dataObj.arr.length > 1) {
+    const data = dataObj.arr;
 
-      chartContainer.appendChild(chartTitle);
-      CreateChart(dates, close, "close price", open, "open price");
+    const dates = data.map((entry) => dayjs(entry.t).format("M/D"));
+    const open = data.map((entry) => entry.o);
+    const close = data.map((entry) => entry.c);
 
-      stockSuccess = true;
+    var chartTitle = document.createElement("h2");
+    chartTitle.textContent = `${stocksTicker} (${from} to ${to})`;
 
-      createComparePanel(stocksTicker, from, to);
-    } else {
-      var errorMsg = document.createElement("h1");
-      errorMsg.textContent = "Error fetching stock : chart cannot be created";
-      chartContainer.appendChild(errorMsg);
-      stockSuccess = false;
-    }
-  } catch (error) {
+    chartContainer.appendChild(chartTitle);
+    CreateChart(dates, close, "close price", open, "open price");
+
+    stockSuccess = true;
+
+    createComparePanel(stocksTicker, from, to);
+  } else {
     var errorMsg = document.createElement("h1");
-    errorMsg.textContent = `Error fetching stock : ${error}`;
+    errorMsg.textContent = "Error fetching stock : chart cannot be created";
     chartContainer.appendChild(errorMsg);
     stockSuccess = false;
   }
@@ -156,9 +171,60 @@ async function getNews(stocksTicker, from, to) {
   var url = `${News}?ticker=${stocksTicker}&published_utc.gte=${from}&published_utc.lte=${to}&order=desc&limit=100&apiKey=${APIKEY}`;
 
   var response = await fetch(url);
-  var data = await response.json();
 
-  return data.results;
+  if (response.status == 200) {
+    var data = await response.json();
+
+    return {
+      code: response.status,
+      arr: data.results,
+    };
+  } else {
+    return {
+      code: response.status,
+      arr: [],
+    };
+  }
+}
+
+function createNewsBox(data) {
+  var dates = [];
+  var index = [];
+
+  for (var i = 0; i < data.length; i++) {
+    var date = data[i].published_utc.slice(0, 10);
+    if (!dates.includes(date)) {
+      dates.push(date);
+      index.push(i);
+    }
+  }
+
+  for (var i = 0; i < data.length; i++) {
+    var newsBox = document.createElement("div");
+    newsBox.setAttribute("class", "news-box");
+
+    if (index.includes(i)) {
+      var newsDate = document.createElement("h3");
+      newsDate.textContent = `${data[i].published_utc.slice(0, 10)}`;
+      newsPanel.appendChild(newsDate);
+    }
+
+    var newsTitle = document.createElement("h4");
+    newsTitle.textContent = `${data[i].title}`;
+
+    var newsURL = document.createElement("a");
+    newsURL.textContent = "Link to the news";
+    newsURL.setAttribute("href", data[i].article_url);
+    newsURL.setAttribute("target", "_blank");
+
+    newsBox.appendChild(newsTitle);
+    newsBox.appendChild(newsURL);
+
+    newsBox.setAttribute("style", "border-radius: 10px");
+
+    newsPanel.appendChild(newsBox);
+    newsPanel.setAttribute("style", "height: 80vh; overflow: auto;");
+  }
 }
 
 async function DisplayNews(stocksTicker, from, to) {
@@ -166,62 +232,25 @@ async function DisplayNews(stocksTicker, from, to) {
     newsPanel.removeChild(newsPanel.firstChild);
   }
 
-  try {
-    const newsData = await getNews(stocksTicker, from, to);
-    if (newsData.length > 0) {
-      var dates = [];
-      var index = [];
+  const newsObj = await getNews(stocksTicker, from, to);
 
-      for (var i = 0; i < newsData.length; i++) {
-        var date = newsData[i].published_utc.slice(0, 10);
-        if (!dates.includes(date)) {
-          dates.push(date);
-          index.push(i);
-        }
-      }
-
-      for (var i = 0; i < newsData.length; i++) {
-        var newsBox = document.createElement("div");
-        newsBox.setAttribute("class", "news-box");
-
-        if (index.includes(i)) {
-          var newsDate = document.createElement("h3");
-          newsDate.textContent = `${newsData[i].published_utc.slice(0, 10)}`;
-          newsPanel.appendChild(newsDate);
-        }
-
-        var newsTitle = document.createElement("h4");
-        newsTitle.textContent = `${newsData[i].title}`;
-
-        var newsURL = document.createElement("a");
-        newsURL.textContent = "Link to the news";
-        newsURL.setAttribute("href", newsData[i].article_url);
-        newsURL.setAttribute("target", "_blank");
-
-        newsBox.appendChild(newsTitle);
-        newsBox.appendChild(newsURL);
-
-        newsBox.setAttribute("style", "border-radius: 10px");
-
-        newsPanel.appendChild(newsBox);
-        newsPanel.setAttribute("style", "height: 80vh; overflow: auto;");
-      }
-
-      newsSuccess = true;
-    } else {
-      var errorMsg = document.createElement("h1");
-      errorMsg.textContent = "Error fetching news: no news can be fetched";
-      newsPanel.appendChild(errorMsg);
-      newsSuccess = false;
-    }
-  } catch (error) {
+  if (
+    newsObj.code == 200 &&
+    newsObj.arr &&
+    newsObj.arr.length > 0 &&
+    stockSuccess
+  ) {
+    createNewsBox(newsObj.arr);
+    newsSuccess = true;
+  } else {
     var errorMsg = document.createElement("h1");
-    errorMsg.textContent = `Error fetching news : ${error}`;
+    errorMsg.textContent = "Error fetching news: no news can be fetched";
     newsPanel.appendChild(errorMsg);
     newsSuccess = false;
   }
 }
 
+/*
 async function getStockInfo(stocksTicker) {
   const APIKEY = "79G4QU6AaADL93J2chBjRQKru3lIvD8z";
   const TicketDetails = "https://api.polygon.io/v3/reference/tickers";
@@ -235,7 +264,7 @@ async function getStockInfo(stocksTicker) {
     name: data.results.name,
     iconURL: data.results.branding.logo_url + `?apiKey=${APIKEY}`,
   };
-}
+}*/
 
 function updateTickerHistory(tickerHistory) {
   while (historyPanel.firstChild) {
