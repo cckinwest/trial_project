@@ -52,7 +52,8 @@ button {
 
 #stock-input,
 #start-date-input,
-#end-date-input {
+#end-date-input, 
+#compare-stock {
   padding: 8px;
   border-radius: 4px;
   border: none;
@@ -85,6 +86,20 @@ button {
 }
 
 #clear-button:hover {
+  background: var(--purple);
+}
+
+#compare-button {
+  padding: 8px 16px;
+  background: var(--blue);
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#compare-button:hover {
   background: var(--purple);
 }
 
