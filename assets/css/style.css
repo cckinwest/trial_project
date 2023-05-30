@@ -154,8 +154,8 @@ button {
 }
 
 #myChart{
-  height: 70vh;
-  width: 60vw;
+  height: 63vh;
+  width: 54vw;
   position: relative;
 }
 
@@ -229,7 +229,7 @@ footer {
   }
 
   #myChart{
-    width: 90vw;  
+    width: 72vw;  
   }  
   
   #history-container {    

@@ -150,15 +150,15 @@ async function DisplayStockData(stocksTicker, from, to) {
 }
 
 async function getNews(stocksTicker, from, to) {
-  const APIKEY = "3f365a6bc42242c98bd807aa869036d5";
-  const Everything = "https://newsapi.org/v2/everything";
+  const APIKEY = "79G4QU6AaADL93J2chBjRQKru3lIvD8z";
+  const News = "https://api.polygon.io/v2/reference/news";
 
-  var url = `${Everything}?q=${stocksTicker}%stock&from=${from}&to=${to}&sortBy=publishedAt&apiKey=${APIKEY}&language=en`;
+  var url = `${News}?ticker=${stocksTicker}&published_utc.gte=${from}&published_utc.lte=${to}&order=desc&limit=100&apiKey=${APIKEY}`;
 
   var response = await fetch(url);
   var data = await response.json();
 
-  return data.articles;
+  return data.results;
 }
 
 async function DisplayNews(stocksTicker, from, to) {
@@ -173,7 +173,7 @@ async function DisplayNews(stocksTicker, from, to) {
       var index = [];
 
       for (var i = 0; i < newsData.length; i++) {
-        var date = newsData[i].publishedAt.slice(0, 10);
+        var date = newsData[i].published_utc.slice(0, 10);
         if (!dates.includes(date)) {
           dates.push(date);
           index.push(i);
@@ -186,7 +186,7 @@ async function DisplayNews(stocksTicker, from, to) {
 
         if (index.includes(i)) {
           var newsDate = document.createElement("h3");
-          newsDate.textContent = `${newsData[i].publishedAt.slice(0, 10)}`;
+          newsDate.textContent = `${newsData[i].published_utc.slice(0, 10)}`;
           newsPanel.appendChild(newsDate);
         }
 
@@ -195,7 +195,7 @@ async function DisplayNews(stocksTicker, from, to) {
 
         var newsURL = document.createElement("a");
         newsURL.textContent = "Link to the news";
-        newsURL.setAttribute("href", newsData[i].url);
+        newsURL.setAttribute("href", newsData[i].article_url);
         newsURL.setAttribute("target", "_blank");
 
         newsBox.appendChild(newsTitle);
