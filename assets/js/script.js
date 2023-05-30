@@ -288,6 +288,15 @@ function errorWithoutInput() {
   chartContainer.appendChild(errorMsg);
 }
 
+function changeDateFormat(date) {
+  const dateArr = date.split("/");
+  const month = dateArr[0];
+  const day = dateArr[1];
+  const year = dateArr[2];
+
+  return `${year}-${month}-${day}`;
+}
+
 searchBtn.addEventListener("click", async function () {
   stockSuccess = true;
   newsSuccess = true;
@@ -298,8 +307,12 @@ searchBtn.addEventListener("click", async function () {
   }
 
   var stockName = document.getElementById("stock-input").value;
-  var startDate = document.getElementById("start-date-input").value;
-  var endDate = document.getElementById("end-date-input").value;
+  var startDate = changeDateFormat(
+    document.getElementById("start-date-input").value
+  );
+  var endDate = changeDateFormat(
+    document.getElementById("end-date-input").value
+  );
 
   document.getElementById("stock-input").value = "";
   document.getElementById("start-date-input").value = "";
@@ -323,12 +336,8 @@ window.addEventListener("DOMContentLoaded", async function () {
   stockSuccess = true;
   newsSuccess = true;
 
-  document
-    .getElementById("start-date-input")
-    .setAttribute("placeholder", "YYYY-MM-DD");
-  document
-    .getElementById("end-date-input")
-    .setAttribute("placeholder", "YYYY-MM-DD");
+  $("#start-date-input").datepicker();
+  $("#end-date-input").datepicker();
 
   var tickerHistory = [];
   if (localStorage.getItem("tickerHistory")) {
