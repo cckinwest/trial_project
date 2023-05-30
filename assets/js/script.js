@@ -88,7 +88,7 @@ async function createCompareCharts(stock, compare, from, to) {
 function createComparePanel(stocksTicker, from, to) {
   var comparePanel = document.createElement("div");
   comparePanel.setAttribute("id", "comparePanel");
-  comparePanel.setAttribute("style", "margin-top: 40px;");
+  comparePanel.setAttribute("style", "margin-top: 20px;");
   chartContainer.appendChild(comparePanel);
 
   var compareLabel = document.createElement("label");
