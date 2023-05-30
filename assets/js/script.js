@@ -323,6 +323,13 @@ window.addEventListener("DOMContentLoaded", async function () {
   stockSuccess = true;
   newsSuccess = true;
 
+  document
+    .getElementById("start-date-input")
+    .setAttribute("placeholder", "YYYY-MM-DD");
+  document
+    .getElementById("end-date-input")
+    .setAttribute("placeholder", "YYYY-MM-DD");
+
   var tickerHistory = [];
   if (localStorage.getItem("tickerHistory")) {
     tickerHistory = JSON.parse(localStorage.getItem("tickerHistory"));
