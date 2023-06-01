@@ -67,6 +67,64 @@ async function getStockData(stocksTicker, from, to) {
   }
 }
 
+function correlation(arr1, arr2) {
+  function sum(arr) {
+    var sum = 0;
+
+    for (var i = 0; i < arr.length; i++) {
+      sum += arr[i];
+    }
+
+    return sum;
+  }
+
+  function multiSum(xArr, yArr) {
+    var sum = 0;
+
+    for (var i = 0; i < xArr.length; i++) {
+      sum += xArr[i] * yArr[i];
+    }
+
+    return sum;
+  }
+
+  function squareSum(arr) {
+    return multiSum(arr, arr);
+  }
+
+  const n = arr1.length;
+
+  const nominator = n * multiSum(arr1, arr2) - sum(arr1) * sum(arr2);
+  const denominator = Math.sqrt(
+    (n * squareSum(arr1) - sum(arr1) * sum(arr1)) *
+      (n * squareSum(arr2) - sum(arr2) * sum(arr2))
+  );
+
+  return nominator / denominator;
+}
+
+function analysis(corr) {
+  if (corr < -0.8) {
+    return `Very strong negative correlation (${corr.toFixed(2)}) between`;
+  } else if (corr > -0.8 && corr <= -0.5) {
+    return `Strong negative correlation (${corr.toFixed(2)}) between`;
+  } else if (corr > -0.5 && corr <= -0.2) {
+    return `Fair negative correlation (${corr.toFixed(2)}) between`;
+  } else if (corr > -0.2 && corr <= -0.05) {
+    return `Weak negative correlation (${corr.toFixed(2)}) between`;
+  } else if (corr > -0.05 && corr < 0.05) {
+    return `Almost no correlation (${corr.toFixed(2)}) between`;
+  } else if (corr >= 0.05 && corr < 0.2) {
+    return `Weak positive correlation (${corr.toFixed(2)}) between`;
+  } else if (corr >= 0.2 && corr < 0.5) {
+    return `Fair positive correlation (${corr.toFixed(2)}) between`;
+  } else if (corr >= 0.5 && corr < 0.8) {
+    return `Strong positive correlation (${corr.toFixed(2)}) between`;
+  } else if (corr >= 0.8) {
+    return `Very strong positive correlation (${corr.toFixed(2)}) between`;
+  }
+}
+
 async function createCompareCharts(stock, compare, from, to) {
   while (chartContainer.firstChild) {
     chartContainer.removeChild(chartContainer.firstChild);
@@ -90,11 +148,19 @@ async function createCompareCharts(stock, compare, from, to) {
     const compareClose = compareData.map((data) => data.c);
 
     var chartTitle = document.createElement("h2");
-    chartTitle.textContent = `${stock} vs ${compare} (${from} to ${to})`;
+    chartTitle.textContent = `Prices of ${stock} vs ${compare} (${from} to ${to})`;
 
     chartContainer.appendChild(chartTitle);
 
     CreateChart(dates, stockClose, stock, compareClose, compare);
+
+    var coefficient = correlation(stockClose, compareClose);
+    const report = analysis(coefficient);
+
+    var correlateText = document.createElement("p");
+    correlateText.textContent = `${report} ${stock} and ${compare} in the period.`;
+
+    chartContainer.appendChild(correlateText);
 
     createComparePanel(stock, from, to);
   } else {
@@ -127,7 +193,7 @@ function createComparePanel(stocksTicker, from, to) {
 
   compareBtn.addEventListener("click", () => {
     if (compareStock.value) {
-      const compareTicker = compareStock.value;
+      const compareTicker = compareStock.value.toUpperCase();
       createCompareCharts(stocksTicker, compareTicker, from, to);
     }
   });
@@ -148,7 +214,7 @@ async function DisplayStockData(stocksTicker, from, to) {
     const close = data.map((entry) => entry.c);
 
     var chartTitle = document.createElement("h2");
-    chartTitle.textContent = `${stocksTicker} (${from} to ${to})`;
+    chartTitle.textContent = `Prices of ${stocksTicker} (${from} to ${to})`;
 
     chartContainer.appendChild(chartTitle);
     CreateChart(dates, close, "close price", open, "open price");
@@ -335,7 +401,7 @@ searchBtn.addEventListener("click", async function () {
     tickerHistory = JSON.parse(localStorage.getItem("tickerHistory"));
   }
 
-  var stockName = document.getElementById("stock-input").value;
+  var stockName = document.getElementById("stock-input").value.toUpperCase();
   var startDate = changeDateFormat(
     document.getElementById("start-date-input").value
   );
