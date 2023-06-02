@@ -105,23 +105,23 @@ function correlation(arr1, arr2) {
 
 function analysis(corr) {
   if (corr < -0.8) {
-    return `Very strong negative correlation (${corr.toFixed(2)}) between`;
+    return `Very strong negative correlation (${corr.toFixed(2)})`;
   } else if (corr > -0.8 && corr <= -0.5) {
-    return `Strong negative correlation (${corr.toFixed(2)}) between`;
+    return `Strong negative correlation (${corr.toFixed(2)})`;
   } else if (corr > -0.5 && corr <= -0.2) {
-    return `Fair negative correlation (${corr.toFixed(2)}) between`;
+    return `Fair negative correlation (${corr.toFixed(2)})`;
   } else if (corr > -0.2 && corr <= -0.05) {
-    return `Weak negative correlation (${corr.toFixed(2)}) between`;
+    return `Weak negative correlation (${corr.toFixed(2)})`;
   } else if (corr > -0.05 && corr < 0.05) {
-    return `Almost no correlation (${corr.toFixed(2)}) between`;
+    return `Almost no correlation (${corr.toFixed(2)})`;
   } else if (corr >= 0.05 && corr < 0.2) {
-    return `Weak positive correlation (${corr.toFixed(2)}) between`;
+    return `Weak positive correlation (${corr.toFixed(2)})`;
   } else if (corr >= 0.2 && corr < 0.5) {
-    return `Fair positive correlation (${corr.toFixed(2)}) between`;
+    return `Fair positive correlation (${corr.toFixed(2)})`;
   } else if (corr >= 0.5 && corr < 0.8) {
-    return `Strong positive correlation (${corr.toFixed(2)}) between`;
+    return `Strong positive correlation (${corr.toFixed(2)})`;
   } else if (corr >= 0.8) {
-    return `Very strong positive correlation (${corr.toFixed(2)}) between`;
+    return `Very strong positive correlation (${corr.toFixed(2)})`;
   }
 }
 
@@ -148,7 +148,7 @@ async function createCompareCharts(stock, compare, from, to) {
     const compareClose = compareData.map((data) => data.c);
 
     var chartTitle = document.createElement("h2");
-    chartTitle.textContent = `Prices of ${stock}`;
+    chartTitle.textContent = `Prices of ${stock} and ${compare}`;
 
     chartContainer.appendChild(chartTitle);
 
@@ -158,7 +158,7 @@ async function createCompareCharts(stock, compare, from, to) {
     const report = analysis(coefficient);
 
     var correlateText = document.createElement("p");
-    correlateText.textContent = `${report} ${stock} and ${compare} in the period.`;
+    correlateText.textContent = `${report} between them.`;
 
     chartContainer.appendChild(correlateText);
 
@@ -214,7 +214,7 @@ async function DisplayStockData(stocksTicker, from, to) {
     const close = data.map((entry) => entry.c);
 
     var chartTitle = document.createElement("h2");
-    chartTitle.textContent = `Prices of ${stocksTicker} (${from} to ${to})`;
+    chartTitle.textContent = `Prices of ${stocksTicker}`;
 
     chartContainer.appendChild(chartTitle);
     CreateChart(dates, close, "close price", open, "open price");
