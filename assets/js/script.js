@@ -148,7 +148,7 @@ async function createCompareCharts(stock, compare, from, to) {
     const compareClose = compareData.map((data) => data.c);
 
     var chartTitle = document.createElement("h2");
-    chartTitle.textContent = `Prices of ${stock} vs ${compare} (${from} to ${to})`;
+    chartTitle.textContent = `Prices of ${stock}`;
 
     chartContainer.appendChild(chartTitle);
 
